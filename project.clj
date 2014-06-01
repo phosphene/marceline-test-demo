@@ -6,13 +6,11 @@
   :dependencies [[org.clojure/clojure "1.4.0"]]
   :main ^:skip-aot marceline-test-demo.core
   :target-path "target/%s"
-  :profiles { 
-             :dev
+  :profiles {:dev
              {:dependencies [
                              [storm "0.9.0.1"]
                              [yieldbot/marceline "0.2.0-SNAPSHOT"]
                              [midje "1.6.0"]
                              [lein-midje "3.1.3"]]}
 
-
-:uberjar {:aot :all}})
+             :uberjar {:aot :all}})
