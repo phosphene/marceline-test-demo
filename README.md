@@ -1,20 +1,24 @@
 # marceline-test-demo
 
-FIXME: description
+
+Demonstration of Marceline DSL for Trident assisted by testing
+
+
+
 
 ## Installation
 
-Download from http://example.com/FIXME.
+
 
 ## Usage
 
-FIXME: explanation
 
-    $ java -jar marceline-test-demo-0.1.0-standalone.jar [args]
+
+
 
 ## Options
 
-FIXME: listing of options this app accepts.
+
 
 ## Examples
 
@@ -30,7 +34,6 @@ FIXME: listing of options this app accepts.
 
 ## License
 
-Copyright © 2014 FIXME
+Copyright © 2014 phosphene
 
 Distributed under the Eclipse Public License either version 1.0 or (at
-your option) any later version.
