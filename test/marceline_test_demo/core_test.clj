@@ -2,14 +2,35 @@
   (:import storm.trident.TridentTopology
            [storm.trident.operation.builtin MapGet]
            [storm.trident.testing MemoryMapState$Factory FixedBatchSpout]
-           [backtype.storm LocalDRPC LocalCluster StormSubmitter])
+           [backtype.storm LocalDRPC LocalCluster StormSubmitter]
+           [org.apache.log4j Logger])
   (:require [clojure.test :refer :all]
             [marceline-test-demo.core :refer :all]
-            [backtype.storm.testing :as t])
-  (:use clojure.test
+            [backtype.storm.testing :as t]
+            )
+
+  (:use midje.sweet
         storm.trident.testing
         marceline-test-demo.core
-        [backtype.storm config]))
+        [backtype.storm config]
+        [clojure.tools.logging]
+        ))
+
+
+(defn set-log-level [level]
+  (.. (Logger/getLogger 
+       "org.apache.zookeeper.server.NIOServerCnxn")
+      (setLevel level))
+  (.. (impl-get-log "") getLogger getParent
+      (setLevel level)))
+
+(defmacro with-quiet-logs [& body]
+  `(let [ old-level# (.. (impl-get-log "") getLogger 
+                         getParent getLevel) ]
+     (set-log-level org.apache.log4j.Level/OFF)
+     (let [ ret# (do ~@body) ]
+       (set-log-level old-level#)
+       ret#)))
 
 
 (defn run-local! []
@@ -33,7 +54,8 @@
         conf {TOPOLOGY-WORKERS 6
               TOPOLOGY-MAX-SPOUT-PENDING 20
               TOPOLOGY-MESSAGE-TIMEOUT-SECS 60
-              TOPOLOGY-STATS-SAMPLE-RATE 1.00}
+              TOPOLOGY-STATS-SAMPLE-RATE 1.00
+              TOPOLOGY-DEBUG false}
         spout (doto (mk-fixed-batch-spout 3)
                 (.setCycle true))]
     (StormSubmitter/submitTopology
@@ -56,18 +78,16 @@
                 ["to be or not to be the person"]])
 
 
-(deftest wordcount-drpc
-  (t/with-local-cluster [cluster]
-    (with-drpc [drpc]
-      (let [feeder (feeder-spout ["sentence"])
-            topology (build-topology feeder drpc)]
-        (with-topology [cluster topology]
-          (feed feeder TEST-VALS)
-          (is (= 4
-                 (ffirst
-                  (exec-drpc drpc
-                             "words"
-                             "cat dog the man jumped")))))))))
-
-
+(facts "wordcount examples"
+       (t/with-local-cluster [cluster]
+         (with-drpc [drpc]
+           (let [feeder (feeder-spout ["sentence"])
+                 topology (build-topology feeder drpc)]
+             (with-topology [cluster topology]
+               (feed feeder TEST-VALS)
+               (fact "wordcount works"
+                     (ffirst
+                      (exec-drpc drpc
+                                 "words"
+                                 "cat dog the man jumped")) => 6 ))))))
 
