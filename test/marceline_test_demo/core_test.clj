@@ -13,7 +13,8 @@
         storm.trident.testing
         marceline-test-demo.core
         [backtype.storm config]
-        [clojure.tools.logging]
+        clojure.tools.logging
+        clj-logging-config.log4j
         ))
 
 
