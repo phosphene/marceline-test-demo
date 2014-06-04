@@ -4,7 +4,8 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.4.0"]
-                 [joda-time "2.3"]]
+                 [joda-time "2.3"]
+                 [clj-logging-config "1.9.10"]]
   :main ^:skip-aot marceline-test-demo.core
   :target-path "target/%s"
   :profiles {:dev
